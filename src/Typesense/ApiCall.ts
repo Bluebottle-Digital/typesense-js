@@ -239,7 +239,7 @@ export default class ApiCall {
 
         const customAxios = this.configuration.axios;
 
-        const response = customAxios
+        const response: any = customAxios
           ? await customAxios(requestOptions)
           : await axios(requestOptions);
         if (response.status >= 1 && response.status <= 499) {
@@ -253,7 +253,7 @@ export default class ApiCall {
 
         if (response.status >= 200 && response.status < 300) {
           // If response is 2xx return a resolved promise
-          return Promise.resolve(response.data);
+          return Promise.resolve<any>(response.data);
         } else if (response.status < 500) {
           // Next, if response is anything but 5xx, don't retry, return a custom error
           return Promise.reject(
