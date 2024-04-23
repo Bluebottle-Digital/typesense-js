@@ -1,5 +1,5 @@
-import axios, { AxiosRequestConfig, AxiosResponse, Method } from "axios";
-import { Logger } from "loglevel";
+import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios';
+import { Logger } from 'loglevel';
 import {
   HTTPError,
   ObjectAlreadyExists,
@@ -8,11 +8,11 @@ import {
   RequestMalformed,
   RequestUnauthorized,
   ServerError,
-} from "./Errors";
-import TypesenseError from "./Errors/TypesenseError";
-import Configuration, { NodeConfiguration } from "./Configuration";
+} from './Errors';
+import TypesenseError from './Errors/TypesenseError';
+import Configuration, { NodeConfiguration } from './Configuration';
 
-const APIKEYHEADERNAME = "X-TYPESENSE-API-KEY";
+const APIKEYHEADERNAME = 'X-TYPESENSE-API-KEY';
 const HEALTHY = true;
 const UNHEALTHY = false;
 
@@ -67,10 +67,10 @@ export default class ApiCall {
       responseType = undefined,
     }: {
       abortSignal?: any;
-      responseType?: AxiosRequestConfig["responseType"] | undefined;
+      responseType?: AxiosRequestConfig['responseType'] | undefined;
     } = {}
   ): Promise<T> {
-    return this.performRequest<T>("get", endpoint, {
+    return this.performRequest<T>('get', endpoint, {
       queryParameters,
       abortSignal,
       responseType,
@@ -78,7 +78,7 @@ export default class ApiCall {
   }
 
   async delete<T>(endpoint: string, queryParameters: any = {}): Promise<T> {
-    return this.performRequest<T>("delete", endpoint, { queryParameters });
+    return this.performRequest<T>('delete', endpoint, { queryParameters });
   }
 
   async post<T>(
@@ -87,7 +87,7 @@ export default class ApiCall {
     queryParameters: any = {},
     additionalHeaders: any = {}
   ): Promise<T> {
-    return this.performRequest<T>("post", endpoint, {
+    return this.performRequest<T>('post', endpoint, {
       queryParameters,
       bodyParameters,
       additionalHeaders,
@@ -99,7 +99,7 @@ export default class ApiCall {
     bodyParameters: any = {},
     queryParameters: any = {}
   ): Promise<T> {
-    return this.performRequest<T>("put", endpoint, {
+    return this.performRequest<T>('put', endpoint, {
       queryParameters,
       bodyParameters,
     });
@@ -110,7 +110,7 @@ export default class ApiCall {
     bodyParameters: any = {},
     queryParameters: any = {}
   ): Promise<T> {
-    return this.performRequest<T>("patch", endpoint, {
+    return this.performRequest<T>('patch', endpoint, {
       queryParameters,
       bodyParameters,
     });
@@ -131,7 +131,7 @@ export default class ApiCall {
       bodyParameters?: any;
       additionalHeaders?: any;
       abortSignal?: any;
-      responseType?: AxiosRequestConfig["responseType"] | undefined;
+      responseType?: AxiosRequestConfig['responseType'] | undefined;
       skipConnectionTimeout?: boolean;
     }
   ): Promise<T> {
@@ -155,7 +155,7 @@ export default class ApiCall {
       );
 
       if (abortSignal && abortSignal.aborted) {
-        return Promise.reject(new Error("Request aborted by caller."));
+        return Promise.reject(new Error('Request aborted by caller.'));
       }
 
       let abortListener;
@@ -185,9 +185,9 @@ export default class ApiCall {
               let transformedData = data;
               if (
                 headers !== undefined &&
-                typeof data === "string" &&
-                headers["content-type"] &&
-                headers["content-type"].startsWith("application/json")
+                typeof data === 'string' &&
+                headers['content-type'] &&
+                headers['content-type'].startsWith('application/json')
               ) {
                 transformedData = JSON.parse(data);
               }
@@ -206,14 +206,14 @@ export default class ApiCall {
 
         if (this.sendApiKeyAsQueryParam) {
           requestOptions.params = requestOptions.params || {};
-          requestOptions.params["x-typesense-api-key"] = this.apiKey;
+          requestOptions.params['x-typesense-api-key'] = this.apiKey;
         }
 
         if (
           bodyParameters &&
-          ((typeof bodyParameters === "string" &&
+          ((typeof bodyParameters === 'string' &&
             bodyParameters.length !== 0) ||
-            (typeof bodyParameters === "object" &&
+            (typeof bodyParameters === 'object' &&
               Object.keys(bodyParameters).length !== 0))
         ) {
           requestOptions.data = bodyParameters;
@@ -224,8 +224,17 @@ export default class ApiCall {
           const cancelToken = axios.CancelToken;
           const source = cancelToken.source();
           abortListener = () => source.cancel();
-          abortSignal.addEventListener("abort", abortListener);
+          abortSignal.addEventListener('abort', abortListener);
           requestOptions.cancelToken = source.token;
+        }
+
+        if (requestType === 'get') {
+          const url = requestOptions.url;
+          const init = requestOptions.params
+            ? `?${new URLSearchParams(requestOptions.params).toString()}`
+            : '';
+          requestOptions.url = url + init;
+          requestOptions.params = {};
         }
 
         const response = await axios(requestOptions);
@@ -260,8 +269,8 @@ export default class ApiCall {
             node.index
           } failed due to "${error.code} ${error.message}${
             error.response == null
-              ? ""
-              : " - " + JSON.stringify(error.response?.data)
+              ? ''
+              : ' - ' + JSON.stringify(error.response?.data)
           }"`
         );
         // this.logger.debug(error.stack)
@@ -271,7 +280,7 @@ export default class ApiCall {
         await this.timer(this.retryIntervalSeconds);
       } finally {
         if (abortSignal && abortListener) {
-          abortSignal.removeEventListener("abort", abortListener);
+          abortSignal.removeEventListener('abort', abortListener);
         }
       }
     }
@@ -290,7 +299,7 @@ export default class ApiCall {
       this.logger.debug(
         `Request #${requestNumber}: Nodes Health: Node ${
           this.nearestNode.index
-        } is ${this.nearestNode.isHealthy === true ? "Healthy" : "Unhealthy"}`
+        } is ${this.nearestNode.isHealthy === true ? 'Healthy' : 'Unhealthy'}`
       );
       if (
         this.nearestNode.isHealthy === true ||
@@ -312,10 +321,10 @@ export default class ApiCall {
         .map(
           (node) =>
             `Node ${node.index} is ${
-              node.isHealthy === true ? "Healthy" : "Unhealthy"
+              node.isHealthy === true ? 'Healthy' : 'Unhealthy'
             }`
         )
-        .join(" || ")}`
+        .join(' || ')}`
     );
     let candidateNode: Node = this.nodes[0];
     for (let i = 0; i <= this.nodes.length; i++) {
@@ -354,7 +363,7 @@ export default class ApiCall {
 
   initializeMetadataForNodes(): void {
     if (this.nearestNode != null) {
-      this.nearestNode.index = "nearestNode";
+      this.nearestNode.index = 'nearestNode';
       this.setNodeHealthcheck(this.nearestNode, HEALTHY);
     }
 
@@ -381,7 +390,7 @@ export default class ApiCall {
     if (!this.sendApiKeyAsQueryParam) {
       defaultHeaders[APIKEYHEADERNAME] = this.apiKey;
     }
-    defaultHeaders["Content-Type"] = "application/json";
+    defaultHeaders['Content-Type'] = 'application/json';
     return defaultHeaders;
   }
 
@@ -395,8 +404,8 @@ export default class ApiCall {
   ): TypesenseError {
     let errorMessage = `Request failed with HTTP code ${response.status}`;
     if (
-      typeof messageFromServer === "string" &&
-      messageFromServer.trim() !== ""
+      typeof messageFromServer === 'string' &&
+      messageFromServer.trim() !== ''
     ) {
       errorMessage += ` | Server said: ${messageFromServer}`;
     }
