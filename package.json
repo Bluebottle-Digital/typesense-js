@@ -82,7 +82,8 @@
     "tsify": "^5.0.4",
     "typescript": "^4.8.4",
     "vinyl-buffer": "^1.0.1",
-    "vinyl-source-stream": "^2.0.0"
+    "vinyl-source-stream": "^2.0.0",
+    "axios": "0.28.0"
   },
   "scripts": {
     "format": "prettier --write \"(src|test|doc)/**/*.(ts|json|js)\"",
@@ -102,11 +103,11 @@
   "repository": "typesense/typesense-js",
   "license": "Apache-2.0",
   "dependencies": {
-    "axios": "0.28.0",
     "loglevel": "^1.8.0"
   },
   "peerDependencies": {
-    "@babel/runtime": "^7.17.2"
+    "@babel/runtime": "^7.17.2",
+    "axios": "*"
   },
   "engines": {
     "node": ">=14"
