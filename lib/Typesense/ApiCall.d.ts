@@ -7,7 +7,7 @@ interface Node extends NodeConfiguration {
 }
 export default class ApiCall {
     private configuration;
-    private readonly apiKey;
+    private readonly apiKey?;
     private readonly nodes;
     private readonly nearestNode;
     private readonly connectionTimeoutSeconds;

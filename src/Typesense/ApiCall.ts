@@ -22,7 +22,7 @@ interface Node extends NodeConfiguration {
 }
 
 export default class ApiCall {
-  private readonly apiKey: string;
+  private readonly apiKey?: string;
   private readonly nodes: Node[];
   private readonly nearestNode: Node;
   private readonly connectionTimeoutSeconds: number;
@@ -237,7 +237,11 @@ export default class ApiCall {
           requestOptions.params = {};
         }
 
-        const response = await axios(requestOptions);
+        const customAxios = this.configuration.axios;
+
+        const response = customAxios
+          ? await customAxios(requestOptions)
+          : await axios(requestOptions);
         if (response.status >= 1 && response.status <= 499) {
           // Treat any status code > 0 and < 500 to be an indication that node is healthy
           // We exclude 0 since some clients return 0 when request fails

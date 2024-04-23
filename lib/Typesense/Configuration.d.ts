@@ -1,4 +1,5 @@
-import { Logger, LogLevelDesc } from "loglevel";
+import { Logger, LogLevelDesc } from 'loglevel';
+import { AxiosInstance } from 'axios';
 export interface NodeConfiguration {
     host: string;
     port: number;
@@ -16,7 +17,7 @@ export interface NodeConfigurationWithUrl {
     url: string;
 }
 export interface ConfigurationOptions {
-    apiKey: string;
+    apiKey?: string;
     nodes: NodeConfiguration[] | NodeConfigurationWithHostname[] | NodeConfigurationWithUrl[];
     randomizeNodes?: boolean;
     /**
@@ -39,6 +40,7 @@ export interface ConfigurationOptions {
     useServerSideSearchCache?: boolean;
     cacheSearchResultsForSeconds?: number;
     additionalHeaders?: Record<string, string>;
+    axios?: AxiosInstance;
     logLevel?: LogLevelDesc;
     logger?: Logger;
 }
@@ -49,13 +51,14 @@ export default class Configuration {
     readonly healthcheckIntervalSeconds: number;
     readonly numRetries: number;
     readonly retryIntervalSeconds: number;
-    readonly apiKey: string;
+    readonly apiKey?: string;
     readonly sendApiKeyAsQueryParam?: boolean;
     readonly cacheSearchResultsForSeconds: number;
     readonly useServerSideSearchCache: boolean;
     readonly logger: Logger;
     readonly logLevel: LogLevelDesc;
     readonly additionalHeaders?: Record<string, string>;
+    readonly axios?: AxiosInstance;
     constructor(options: ConfigurationOptions);
     validate(): boolean;
     private validateNodes;
